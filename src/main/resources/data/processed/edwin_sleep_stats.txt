@@ -1,0 +1,10 @@
+Start ⧖:      2015-01-15
+Finish ⧖:     2016-05-07
+Window Σ:     475 days
+Sessions Σ:   2503 sleeps
+Sessions x̅:   5.27 sleeps/day
+Duration ⋁:   785 min
+Duration ⋀:   1 min
+Duration x̃:   118 min
+Duration x̅:   147 min
+Duration x̅:   772 min/day

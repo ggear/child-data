@@ -1,0 +1,10 @@
+Start ⧖:      2017-09-18
+Finish ⧖:     2019-01-16
+Window Σ:     475 days
+Sessions Σ:   2644 sleeps
+Sessions x̅:   5.57 sleeps/day
+Duration ⋁:   791 min
+Duration ⋀:   2 min
+Duration x̃:   117 min
+Duration x̅:   136 min
+Duration x̅:   756 min/day

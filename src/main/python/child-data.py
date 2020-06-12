@@ -5,7 +5,7 @@ import pandas as pd
 # TODO:
 #   - Dotted line 'k', or not? Thickness?
 #   - Decide on size 30x30, 30x48, 40x60, 48x60, 60x60 print
-#   - Only save variations at high res, scale to print size, drop old versions from git, dpi=3500
+#   - Only save variations at high res, scale to print size
 
 DAYS_TO_INCLUDE = 475
 
@@ -20,12 +20,13 @@ def save_plot(df_input, path_output, background_colour, foreground_colour, label
     print('Plotting [{}] data ... '.format(df_input.shape[0]))
 
     for row in range(df_input.shape[0]):
-        duration = df_input.loc[df_input.index[row], 'Duration']
-        minutes = df_input.loc[df_input.index[row], 'Minutes']
-        radial = df_input.loc[df_input.index[row], 'Radial']
-        width = duration / 60 / 24 * 2 * np.pi
-        center = (-(minutes + duration / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2
-        axes.bar(center, 1, width=width, bottom=radial, color=foreground_colour)
+        axes.bar(
+            x=(-(df_input.loc[df_input.index[row], 'Minutes'] +
+                 df_input.loc[df_input.index[row], 'Duration'] / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2,
+            height=1,
+            width=df_input.loc[df_input.index[row], 'Duration'] / 60 / 24 * 2 * np.pi,
+            bottom=df_input.loc[df_input.index[row], 'Radial'],
+            color=foreground_colour)
 
     file_name = '{}_{}_{}_{}.png' \
         .format(path_output, background_colour, foreground_colour, 'None' if label_colour is None else label_colour)
@@ -49,7 +50,7 @@ def save_plot(df_input, path_output, background_colour, foreground_colour, label
                          color=label_colour, fontsize=8, family='monospace')
 
     plt.ylim(ymax=df_input['Radial'].max() + 1)
-    plt.savefig(file_name, facecolor=background_colour, bbox_inches='tight', pad_inches=1.5, dpi=100)
+    plt.savefig(file_name, facecolor=background_colour, bbox_inches='tight', pad_inches=1.5, dpi=900)
     plt.close('all')
     print('Released resources for figure\n')
 

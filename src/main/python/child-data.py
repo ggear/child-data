@@ -1,31 +1,34 @@
+# -*- coding: utf-8 -*-
+
+import matplotlib.font_manager as mfm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 # TODO:
-#   - Dotted line 'k', or not? Thickness?
 #   - Decide on size 30x30, 30x48, 40x60, 48x60, 60x60 print
 #   - Only save variations at high res, scale to print size
 
 DAYS_TO_INCLUDE = 475
 
 
-def save_plot(df_input, path_output, background_colour, foreground_colour, label_colour, label_print):
-    figure = plt.figure(figsize=(36, 36))
+def save_plot(child, data, path_output, background_colour, foreground_colour, label_colour, label_print, stats_print):
+    figure = plt.figure(figsize=(2.67, 4.5))
+    font = mfm.FontProperties(size=3, fname='/System/Library/Fonts/Apple Symbols.ttf')
     axes = figure.add_subplot(111, projection='polar')
     axes.set_facecolor(background_colour)
     axes.axes.get_xaxis().set_visible(False)
     axes.axes.get_yaxis().set_visible(False)
     axes.spines['polar'].set_visible(False)
-    print('Plotting [{}] data ... '.format(df_input.shape[0]))
+    print('Plotting [{}] data ... '.format(data[0].shape[0]))
 
-    for row in range(df_input.shape[0]):
+    for row in range(data[0].shape[0]):
         axes.bar(
-            x=(-(df_input.loc[df_input.index[row], 'Minutes'] +
-                 df_input.loc[df_input.index[row], 'Duration'] / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2,
+            x=(-(data[0].loc[data[0].index[row], 'Minutes'] +
+                 data[0].loc[data[0].index[row], 'Duration'] / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2,
             height=1,
-            width=df_input.loc[df_input.index[row], 'Duration'] / 60 / 24 * 2 * np.pi,
-            bottom=df_input.loc[df_input.index[row], 'Radial'],
+            width=data[0].loc[data[0].index[row], 'Duration'] / 60 / 24 * 2 * np.pi,
+            bottom=data[0].loc[data[0].index[row], 'Radial'],
             color=foreground_colour)
 
     file_name = '{}_{}_{}_{}.png' \
@@ -35,27 +38,29 @@ def save_plot(df_input, path_output, background_colour, foreground_colour, label
     if label_colour is not None:
         ticks = np.linspace(0, np.pi * 2, num=25)
         hours = ['6pm', '5pm', '4pm', '3pm', '2pm', '1pm', '12pm',
-                 '11am', '10am', '9am', '8am', '7am', '6am',
+                 '11am', '10am', '9am', '8am', '$7am$', '6am',
                  '5am', '4am', '3am', '2am', '1am', '12am',
-                 '11pm', '10pm', '9pm', '8pm', '7pm', '']
+                 '11pm', '10pm', '9pm', '8pm', '$7pm$', '']
         hours = ['', '', '', '', '', '', '',
                  '', '', '', '', '7am', '',
                  '', '', '', '', '', '',
                  '', '', '', '', '7pm', '']
         for i in range(len(ticks)):
             if hours[i] != '':
-                plt.plot([0, ticks[i]], [0, df_input['Radial'].max() + 1], 'k:', color=label_colour, linewidth=5, alpha=0.5)
+                plt.plot((0, ticks[i]), (0, data[0]['Radial'].max() + 1), color=label_colour, linewidth=0.1, alpha=0.5)
             if label_print:
-                plt.text(ticks[i], df_input['Radial'].max() + 50, hours[i], ha='center', va='center',
-                         color=label_colour, fontsize=8, family='monospace')
+                plt.text(ticks[i], data[0]['Radial'].max() + 50, hours[i], ha='center', va='center',
+                         color=label_colour, fontproperties=font)
+        if stats_print:
+            plt.text(4.25, 850, data[1], ha='left', va='center', color=label_colour, linespacing=1.8, fontproperties=font)
 
-    plt.ylim(ymax=df_input['Radial'].max() + 1)
-    plt.savefig(file_name, facecolor=background_colour, bbox_inches='tight', pad_inches=1.5, dpi=900)
+    plt.ylim(ymax=data[0]['Radial'].max() + 1)
+    plt.savefig(file_name, facecolor=background_colour, dpi=900)
     plt.close('all')
     print('Released resources for figure\n')
 
 
-def get_data(path_input, path_output, activity):
+def get_data(child, path_input, path_output, activity):
     df = pd.read_csv(path_input)
     df = df.loc[df['Activity'] == activity]
     df = df.set_index(pd.to_datetime(df['Date and Time'], format='%Y-%m-%d %H:%M:%S'))
@@ -115,52 +120,56 @@ def get_data(path_input, path_output, activity):
         df.to_csv("{}_{}_{}.csv".format(path_output, 4, "polar"))
 
     stats_path = "{}_stats.txt".format(path_output)
-    stats = \
-        "Start ⧖:      {}\n" \
-        "Finish ⧖:     {}\n" \
-        "Window Σ:     {} days\n" \
-        "Sessions Σ:   {} sleeps\n" \
-        "Sessions x̅:   {:.2f} sleeps/day\n" \
-        "Duration ⋁:   {:.0f} min\n" \
-        "Duration ⋀:   {:.0f} min\n" \
-        "Duration x̃:   {:.0f} min\n" \
-        "Duration x̅:   {:.0f} min\n" \
-        "Duration x̅:   {:.0f} min/day\n" \
-            .format(
-            df.index[0].date(),
-            df.index[-1].date(),
-            df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first').shape[0],
-            df.shape[0],
-            df.shape[0] / df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first').shape[0],
-            df['Duration'].max(),
-            df['Duration'].min(),
-            df['Duration'].median(),
-            df['Duration'].mean(),
-            df.groupby(['Date'])['Duration'].agg('sum').mean(),
-        )
+    stats = "" \
+            "${}'s \\/\\/ first \\/\\/ sleeps$\n\n" \
+            "$Start = t_s = {}$\n" \
+            "$Finish = t_f = {}$\n" \
+            "$Timestamps = T = \\{{t: t\\geq{{t_s}}, \\/ t\\leq{{t_f}}\\}}$\n" \
+            "$Sleeps = S = \\{{s_t: t \\/ \\in \\/ T\\}}$\n" \
+            "$Epoch = t_e = days(t_f - t_s) = {}\\/days$\n" \
+            "$Total = |S| = {}\\/sleeps$\n" \
+            "$Average = |S|/t_e = {:.2f}\\/sleeps/day$\n" \
+            "$Sum = ΣS/t_e = {:.0f}\\/min/day$\n" \
+            "$Mean = \\overline{{s}} = {:.0f}\\/min$\n" \
+            "$Median = med(S) = {:.0f}\\/min$\n" \
+            "$Maximum = max(S) = {:.0f}\\/min$\n" \
+            "$Mininum = min(S) = {:.0f}\\/min$\n" \
+            "".format(
+        child.title(),
+        df.index[0].strftime("%d/%m/%Y\\/\\/%H\\colon%M\\colon%S"),
+        df.index[-1].strftime("%d/%m/%Y\\/\\/%H\\colon%M\\colon%S"),
+        df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first').shape[0],
+        df.shape[0],
+        df.shape[0] / df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first').shape[0],
+        df.groupby(['Date'])['Duration'].agg('sum').mean(),
+        df['Duration'].mean(),
+        df['Duration'].median(),
+        df['Duration'].max(),
+        df['Duration'].min(),
+    )
     with open(stats_path, 'w') as stats_file:
         stats_file.write(stats)
     print("Summary stats written to [{}]:\n\n{}".format(stats_path, stats))
 
-    return df
+    return (df, stats)
 
 
 metadata_all = {
     'edwin': [
-        # ('#F0F6FF', '#A4C9D7', None, False),
-        ('#F0F6FF', '#A4C9D7', '#5A7B8F', False),
-        # ('#EAF2FA', '#A4C9D7', '#5A7B8F', False),
-        # ('#B2D2A4', '#1A4314', '#5A7B8F', False),
-        # ('#7EC8E3', '#0000FF', '#5A7B8F', False),
-        # ('#C3E0E5', '#274472', '#5A7B8F', False),
+        # ('#F0F6FF', '#A4C9D7', None, False, False),
+        ('#F0F6FF', '#A4C9D7', '#5A7B8F', True, True),
+        # ('#EAF2FA', '#A4C9D7', '#5A7B8F', False, False),
+        # ('#B2D2A4', '#1A4314', '#5A7B8F', False, False),
+        # ('#7EC8E3', '#0000FF', '#5A7B8F', False, False),
+        # ('#C3E0E5', '#274472', '#5A7B8F', False, False),
     ],
-    'ada': [
-        # ('#FFF1F0', '#EFACA7', None, False),
-        ('#FFF1F0', '#EFACA7', '#D08D61', False),
-    ]
+    # 'ada': [
+    #     # ('#FFF1F0', '#EFACA7', None, False, False),
+    #     ('#FFF1F0', '#EFACA7', '#D08D61', True, True),
+    # ]
 }
 
 for child in metadata_all.keys():
-    data = get_data('../resources/data/cleansed/{}.csv'.format(child), '../resources/data/processed/{}_sleep'.format(child), 'Sleep')
+    data = get_data(child, '../resources/data/cleansed/{}.csv'.format(child), '../resources/data/processed/{}_sleep'.format(child), 'Sleep')
     for metadata in metadata_all[child]:
-        save_plot(data, '../resources/image/{}_sleep'.format(child), metadata[0], metadata[1], metadata[2], metadata[3])
+        save_plot(child, data, '../resources/image/{}_sleep'.format(child), metadata[0], metadata[1], metadata[2], metadata[3], metadata[4])

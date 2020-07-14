@@ -1,10 +1,14 @@
-Start ⧖:      2015-01-15
-Finish ⧖:     2016-05-07
-Window Σ:     475 days
-Sessions Σ:   2503 sleeps
-Sessions x̅:   5.27 sleeps/day
-Duration ⋁:   785 min
-Duration ⋀:   1 min
-Duration x̃:   118 min
-Duration x̅:   147 min
-Duration x̅:   772 min/day
+$Edwin's \/\/ first \/\/ sleeps$
+
+$Start = t_s = 15/01/2015\/\/13\colon10\colon00$
+$Finish = t_f = 07/05/2016\/\/17\colon52\colon00$
+$Timestamps = T = \{t: t\geq{t_s}, \/ t\leq{t_f}\}$
+$Sleeps = S = \{s_t: t \/ \in \/ T\}$
+$Epoch = t_e = days(t_f - t_s) = 475\/days$
+$Total = |S| = 2503\/sleeps$
+$Average = |S|/t_e = 5.27\/sleeps/day$
+$Sum = ΣS/t_e = 772\/min/day$
+$Mean = \overline{s} = 147\/min$
+$Median = med(S) = 118\/min$
+$Maximum = max(S) = 785\/min$
+$Mininum = min(S) = 1\/min$

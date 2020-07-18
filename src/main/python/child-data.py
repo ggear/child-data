@@ -1,66 +1,124 @@
 # -*- coding: utf-8 -*-
 
+import PIL
 import matplotlib.font_manager as mfm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from PIL import Image
 
 # TODO:
 #   - Decide on size 30x30, 30x48, 40x60, 48x60, 60x60 print
 #   - Only save variations at high res, scale to print size
 
+SCALE_FACTOR = 40
 DAYS_TO_INCLUDE = 475
+PIL.Image.MAX_IMAGE_PIXELS = None
+mfm.fontManager.ttflist.extend(mfm.createFontList(mfm.findSystemFonts(fontpaths='/Users/graham/Library/Fonts')))
 
 
-def save_plot(child, data, path_output, background_colour, foreground_colour, label_colour, label_print, stats_print):
-    figure = plt.figure(figsize=(2.67, 4.5))
-    font = mfm.FontProperties(size=3, fname='/System/Library/Fonts/Apple Symbols.ttf')
-    axes = figure.add_subplot(111, projection='polar')
-    axes.set_facecolor(background_colour)
-    axes.axes.get_xaxis().set_visible(False)
-    axes.axes.get_yaxis().set_visible(False)
-    axes.spines['polar'].set_visible(False)
-    print('Plotting [{}] data ... '.format(data[0].shape[0]))
+def save_plot(label, df, output, background_colour, foreground_colour, label_colour, label_print, stats_print):
+    file_name = '{}_{}_{}_{}.png' \
+        .format(output, background_colour, foreground_colour, 'None' if label_colour is None else label_colour)
 
-    for row in range(data[0].shape[0]):
-        axes.bar(
-            x=(-(data[0].loc[data[0].index[row], 'Minutes'] +
-                 data[0].loc[data[0].index[row], 'Duration'] / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2,
+    print('Setup [{}] ... '.format(file_name))
+    figure_dpi = min(900, int(6000 / SCALE_FACTOR))
+    figure_width = 2 * SCALE_FACTOR
+    figure_height = 3 * SCALE_FACTOR
+    figure_header = 0.8 * SCALE_FACTOR
+    font = 'inconsolata'
+    font_size = 2.5 * SCALE_FACTOR
+    font_baselineskip = 3.125 * SCALE_FACTOR
+    plt.rcParams['text.latex.preamble'] = [
+        r'\usepackage{amsmath}',
+        r'\usepackage{amsfonts}',
+        r'\usepackage{booktabs}',
+        r'\usepackage{' + font + '}',
+    ]
+    plt.rcParams.update({
+        'font.size': font_size,
+        'text.usetex': True,
+    })
+    figure = plt.figure(figsize=(figure_width, figure_height + figure_header))
+    plot = figure.add_subplot(111, projection='polar')
+    plot.set_facecolor(background_colour)
+    plot.axes.get_xaxis().set_visible(False)
+    plot.axes.get_yaxis().set_visible(False)
+    plot.spines['polar'].set_visible(False)
+
+    print('Plotting [{}] image data ... '.format(df.shape[0]))
+    for row in range(df.shape[0]):
+        plot.bar(
+            x=(-(df.loc[df.index[row], 'Minutes'] +
+                 df.loc[df.index[row], 'Duration'] / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2,
             height=1,
-            width=data[0].loc[data[0].index[row], 'Duration'] / 60 / 24 * 2 * np.pi,
-            bottom=data[0].loc[data[0].index[row], 'Radial'],
+            width=df.loc[df.index[row], 'Duration'] / 60 / 24 * 2 * np.pi,
+            bottom=df.loc[df.index[row], 'Radial'],
             color=foreground_colour)
 
-    file_name = '{}_{}_{}_{}.png' \
-        .format(path_output, background_colour, foreground_colour, 'None' if label_colour is None else label_colour)
-    print('Saving figure [{}] ... '.format(file_name))
-
+    print('Annotating [{}] ... '.format(file_name))
     if label_colour is not None:
         ticks = np.linspace(0, np.pi * 2, num=25)
-        hours = ['6pm', '5pm', '4pm', '3pm', '2pm', '1pm', '12pm',
-                 '11am', '10am', '9am', '8am', '$7am$', '6am',
-                 '5am', '4am', '3am', '2am', '1am', '12am',
-                 '11pm', '10pm', '9pm', '8pm', '$7pm$', '']
-        hours = ['', '', '', '', '', '', '',
-                 '', '', '', '', '7am', '',
-                 '', '', '', '', '', '',
-                 '', '', '', '', '7pm', '']
+        hours = ['', '', '', '', '', '', '', '', '', '', '', '7am',
+                 '', '', '', '', '', '', '', '', '', '', '', '7pm', '']
         for i in range(len(ticks)):
             if hours[i] != '':
-                plt.plot((0, ticks[i]), (0, data[0]['Radial'].max() + 1), color=label_colour, linewidth=0.1, alpha=0.5)
+                plt.plot((0, ticks[i]), (0, df['Radial'].max() + 1), color=label_colour, linewidth=0.1 * SCALE_FACTOR, alpha=0.5)
             if label_print:
-                plt.text(ticks[i], data[0]['Radial'].max() + 50, hours[i], ha='center', va='center',
-                         color=label_colour, fontproperties=font)
+                plt.text(ticks[i], df['Radial'].max() + 50, hours[i], ha='center', va='center', color=label_colour)
         if stats_print:
-            plt.text(4.25, 850, data[1], ha='left', va='center', color=label_colour, linespacing=1.8, fontproperties=font)
+            df_duration = df['Duration']
+            df_days_sum = df.groupby(['Date'])['Duration'].agg('sum')
+            df_days = df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first')
 
-    plt.ylim(ymax=data[0]['Radial'].max() + 1)
-    plt.savefig(file_name, facecolor=background_colour, dpi=900)
+            def eqs(padding=None):
+                return (" " if padding is None else r"\hspace{""" + str(padding * SCALE_FACTOR) + r"sp}") + "= "
+
+            stats = (r"""
+                        \begin{table}[h!]
+                            \sffamily
+                            \fontsize{""" + "{}".format(font_size) + r"""}{""" + "{}".format(font_baselineskip) + r"""}\selectfont
+                            \setlength\tabcolsep{1ex}
+                            \setlength\lightrulewidth{0.1ex}
+                            \setlength\heavyrulewidth{0.3ex}
+                            \begin{tabular}{@{} *2l @{}}
+                                \toprule
+                                \textbf{""" + label.title() + r"""'s first sleeps} &  \\
+                                \midrule
+                                start & $t_s$""" + "{}{}".format(eqs(66500), df.index[0].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
+                                finish & $t_f$""" + "{}{}".format(eqs(), df.index[-1].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
+                                epoch & $t_e$""" + eqs(67000) + r"""$t_f - t_s$ = """ + "{}".format(df_days.shape[0]) + r""" days \\
+                                timestamps & $T$""" + eqs(62000) + r"""$\{t: t_s \leq t \leq t_f\}$ \\
+                                sleeps & $S$""" + eqs(70000) + r"""$\{s_t: t \in T\}$ \\
+                                total & $|S|$ = $|T|$""" + "{}{}".format(eqs(), df.shape[0]) + r""" sleeps \\
+                                average & $|S|/t_e$""" + "{}{:.2f}".format(eqs(61000), df.shape[0] / df_days.shape[0]) + r""" sleeps/day \\
+                                sum & $\Sigma S/t_e$""" + "{}{:.0f}".format(eqs(), df_days_sum.mean()) + r""" min/day \\
+                                mean & $\overline{s}$""" + "{}{:.0f}".format(eqs(), df_duration.mean()) + r""" min \\
+                                median & $\widetilde{s}$""" + "{}{:.0f}".format(eqs(), df_duration.median()) + r""" min \\
+                                minimum & $\vee(S)$""" + "{}{:.0f}".format(eqs(), df_duration.min()) + r""" min \\
+                                maximum & $\wedge(S)$""" + "{}{:.0f}".format(eqs(), df_duration.max()) + r""" min \\
+                                standard deviation & $\sigma(S)$""" + "{}{:.0f}".format(eqs(63500), df_duration.std()) + r""" min \\
+                                \bottomrule
+                            \end{tabular}
+                        \end{table}
+                    """).replace("\n", "")
+            plt.text(4.20, 875, stats, ha='left', va='center', color=label_colour)
+    plt.ylim(ymax=df['Radial'].max() + 1)
+
+    print('Saving [{}] ... '.format(file_name))
+    plt.savefig(file_name, facecolor=background_colour, tight_layout=True, dpi=figure_dpi)
     plt.close('all')
-    print('Released resources for figure\n')
+
+    print('Cropping [{}] ... '.format(file_name))
+    figure_png = Image.open(file_name)
+    figure_png = figure_png.crop((0, figure_header * figure_dpi, figure_width * figure_dpi, (figure_height + figure_header) * figure_dpi))
+    figure_png.save(file_name, dpi=(figure_dpi, figure_dpi))
+    figure_png.show()
+
+    print('Completed image processing\n')
 
 
-def get_data(child, path_input, path_output, activity):
+def get_data(label, path_input, path_output, activity):
     df = pd.read_csv(path_input)
     df = df.loc[df['Activity'] == activity]
     df = df.set_index(pd.to_datetime(df['Date and Time'], format='%Y-%m-%d %H:%M:%S'))
@@ -75,14 +133,14 @@ def get_data(child, path_input, path_output, activity):
         df['Duration'] = df['Duration (min)']
         df = df[['Date', 'Time', 'Activity', 'Duration']]
         print('Data pre-processing:\n{}\n'.format(df))
-        df.to_csv("{}_{}_{}.csv".format(path_output, 0, "original"))
+        df.to_csv('{}_{}_{}.csv'.format(path_output, 0, 'original'))
 
         low_durations = df.groupby(['Date'])['Duration'].agg('sum')
         low_durations = low_durations[low_durations < 400]
         low_durations_list = [date.strftime('%Y-%m-%d') for date in low_durations.index.tolist()]
         df = df[~df['Date'].isin(low_durations.index)]
-        print("Found [{}] low duration days {}".format(len(low_durations_list), low_durations_list))
-        df.to_csv("{}_{}_{}.csv".format(path_output, 1, "duration"))
+        print('Found [{}] low duration days {}'.format(len(low_durations_list), low_durations_list))
+        df.to_csv('{}_{}_{}.csv'.format(path_output, 1, 'duration'))
 
         def get_missing_days():
             missing_days = df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first')
@@ -95,15 +153,15 @@ def get_data(child, path_input, path_output, activity):
             missing_days_loop = get_missing_days()
             df['Date'] = np.where(df['Date'] >= missing_days_loop.index[0], df['Date'] - pd.Timedelta(days=1), df['Date'])
         missing_days_list = [date.strftime('%Y-%m-%d') for date in missing_days_global.index.date.tolist()]
-        print("Found [{}] missing days {}".format(len(missing_days_list), missing_days_list))
-        df.to_csv("{}_{}_{}.csv".format(path_output, 2, "missing"))
+        print('Found [{}] missing days {}'.format(len(missing_days_list), missing_days_list))
+        df.to_csv('{}_{}_{}.csv'.format(path_output, 2, 'missing'))
 
         trimmed_days = df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first').reset_index(drop=True)
         trimmed_days = trimmed_days[trimmed_days.index >= DAYS_TO_INCLUDE]
         trimmed_days_list = [date.strftime('%Y-%m-%d') for date in trimmed_days['Date'].tolist()]
         df = df[~df['Date'].isin(trimmed_days['Date'])]
-        print("Found [{}] excessive days {}".format(len(trimmed_days_list), trimmed_days_list))
-        df.to_csv("{}_{}_{}.csv".format(path_output, 3, "trimmed"))
+        print('Found [{}] excessive days {}'.format(len(trimmed_days_list), trimmed_days_list))
+        df.to_csv('{}_{}_{}.csv'.format(path_output, 3, 'trimmed'))
 
         df['Radial'] = ((df['Date'] - df['Date'].min()).astype(str).str.split(' ').str.get(0)).astype(int)
         df['Minutes'] = df['Time'].astype(str).str.split(':').apply(lambda x: int(x[0]) * 60 + int(x[1]))
@@ -117,41 +175,9 @@ def get_data(child, path_input, path_output, activity):
         if na_duration.shape[0] > 0:
             raise Exception('None duration detected:\n{}'.format(na_duration))
         print('\nData post-processing:\n{}\n'.format(df))
-        df.to_csv("{}_{}_{}.csv".format(path_output, 4, "polar"))
+        df.to_csv('{}_{}_{}.csv'.format(path_output, 4, 'polar'))
 
-    stats_path = "{}_stats.txt".format(path_output)
-    stats = "" \
-            "${}'s \\/\\/ first \\/\\/ sleeps$\n\n" \
-            "$Start = t_s = {}$\n" \
-            "$Finish = t_f = {}$\n" \
-            "$Timestamps = T = \\{{t: t\\geq{{t_s}}, \\/ t\\leq{{t_f}}\\}}$\n" \
-            "$Sleeps = S = \\{{s_t: t \\/ \\in \\/ T\\}}$\n" \
-            "$Epoch = t_e = days(t_f - t_s) = {}\\/days$\n" \
-            "$Total = |S| = {}\\/sleeps$\n" \
-            "$Average = |S|/t_e = {:.2f}\\/sleeps/day$\n" \
-            "$Sum = ΣS/t_e = {:.0f}\\/min/day$\n" \
-            "$Mean = \\overline{{s}} = {:.0f}\\/min$\n" \
-            "$Median = med(S) = {:.0f}\\/min$\n" \
-            "$Maximum = max(S) = {:.0f}\\/min$\n" \
-            "$Mininum = min(S) = {:.0f}\\/min$\n" \
-            "".format(
-        child.title(),
-        df.index[0].strftime("%d/%m/%Y\\/\\/%H\\colon%M\\colon%S"),
-        df.index[-1].strftime("%d/%m/%Y\\/\\/%H\\colon%M\\colon%S"),
-        df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first').shape[0],
-        df.shape[0],
-        df.shape[0] / df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first').shape[0],
-        df.groupby(['Date'])['Duration'].agg('sum').mean(),
-        df['Duration'].mean(),
-        df['Duration'].median(),
-        df['Duration'].max(),
-        df['Duration'].min(),
-    )
-    with open(stats_path, 'w') as stats_file:
-        stats_file.write(stats)
-    print("Summary stats written to [{}]:\n\n{}".format(stats_path, stats))
-
-    return (df, stats)
+    return df
 
 
 metadata_all = {
@@ -163,10 +189,10 @@ metadata_all = {
         # ('#7EC8E3', '#0000FF', '#5A7B8F', False, False),
         # ('#C3E0E5', '#274472', '#5A7B8F', False, False),
     ],
-    # 'ada': [
-    #     # ('#FFF1F0', '#EFACA7', None, False, False),
-    #     ('#FFF1F0', '#EFACA7', '#D08D61', True, True),
-    # ]
+    'ada': [
+        # ('#FFF1F0', '#EFACA7', None, False, False),
+        ('#FFF1F0', '#EFACA7', '#D08D61', True, True),
+    ]
 }
 
 for child in metadata_all.keys():

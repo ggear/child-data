@@ -11,7 +11,11 @@ from PIL import Image
 #   - Decide on size 30x30, 30x48, 40x60, 48x60, 60x60 print
 #   - Only save variations at high res, scale to print size
 
-SCALE_FACTOR = 40
+DOTS_INCH = 300
+WIDTH_INCH = 27
+WIDTH_INCH_SCALE = 27
+HEIGHT_INCH = 37 / WIDTH_INCH_SCALE * WIDTH_INCH
+
 DAYS_TO_INCLUDE = 475
 PIL.Image.MAX_IMAGE_PIXELS = None
 mfm.fontManager.ttflist.extend(mfm.createFontList(mfm.findSystemFonts(fontpaths='/Users/graham/Library/Fonts')))
@@ -22,13 +26,14 @@ def save_plot(label, df, output, background_colour, foreground_colour, label_col
         .format(output, background_colour, foreground_colour, 'None' if label_colour is None else label_colour)
 
     print('Setup [{}] ... '.format(file_name))
-    figure_dpi = min(900, int(6000 / SCALE_FACTOR))
-    figure_width = 2 * SCALE_FACTOR
-    figure_height = 3 * SCALE_FACTOR
-    figure_header = 0.8 * SCALE_FACTOR
+    figure_width = WIDTH_INCH + 1 * (WIDTH_INCH + 1) / WIDTH_INCH_SCALE
+    figure_height = 1.35 * figure_width
+    figure_header = 0.425 * figure_width
+    figure_margin = 21 / 30 * figure_width / (WIDTH_INCH_SCALE + 1)
+    figure_line_width = 0.05 * figure_width
+    font_size = 1.25 * figure_width
+    font_baselineskip = 1.5 * figure_width
     font = 'inconsolata'
-    font_size = 2.5 * SCALE_FACTOR
-    font_baselineskip = 3.125 * SCALE_FACTOR
     plt.rcParams['text.latex.preamble'] = [
         r'\usepackage{amsmath}',
         r'\usepackage{amsfonts}',
@@ -46,15 +51,15 @@ def save_plot(label, df, output, background_colour, foreground_colour, label_col
     plot.axes.get_yaxis().set_visible(False)
     plot.spines['polar'].set_visible(False)
 
-    print('Plotting [{}] image data ... '.format(df.shape[0]))
+    print('Plotting [{}] ... '.format(file_name))
     for row in range(df.shape[0]):
         plot.bar(
-            x=(-(df.loc[df.index[row], 'Minutes'] +
-                 df.loc[df.index[row], 'Duration'] / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2,
+            x=(-(df.loc[df.index[row], 'Minutes'] + df.loc[df.index[row], 'Duration'] / 2) / 60 / 24 * 2 * np.pi) - np.pi / 2,
             height=1,
             width=df.loc[df.index[row], 'Duration'] / 60 / 24 * 2 * np.pi,
             bottom=df.loc[df.index[row], 'Radial'],
-            color=foreground_colour)
+            color=foreground_colour
+        )
 
     print('Annotating [{}] ... '.format(file_name))
     if label_colour is not None:
@@ -63,7 +68,7 @@ def save_plot(label, df, output, background_colour, foreground_colour, label_col
                  '', '', '', '', '', '', '', '', '', '', '', '7pm', '']
         for i in range(len(ticks)):
             if hours[i] != '':
-                plt.plot((0, ticks[i]), (0, df['Radial'].max() + 1), color=label_colour, linewidth=0.1 * SCALE_FACTOR, alpha=0.5)
+                plt.plot((0, ticks[i]), (0, df['Radial'].max() + 1), color=label_colour, linewidth=figure_line_width, alpha=0.5)
             if label_print:
                 plt.text(ticks[i], df['Radial'].max() + 50, hours[i], ha='center', va='center', color=label_colour)
         if stats_print:
@@ -72,7 +77,7 @@ def save_plot(label, df, output, background_colour, foreground_colour, label_col
             df_days = df.set_index(df['Date']).drop_duplicates(subset='Date', keep='first')
 
             def eqs(padding=None):
-                return (" " if padding is None else r"\hspace{""" + str(padding * SCALE_FACTOR) + r"sp}") + "= "
+                return (" " if padding is None else r"\hspace{""" + str(padding * figure_width) + r"sp}") + "= "
 
             stats = (r"""
                         \begin{table}[h!]
@@ -85,19 +90,19 @@ def save_plot(label, df, output, background_colour, foreground_colour, label_col
                                 \toprule
                                 \textbf{""" + label.title() + r"""'s first sleeps} &  \\
                                 \midrule
-                                start & $t_s$""" + "{}{}".format(eqs(66500), df.index[0].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
+                                start & $t_s$""" + "{}{}".format(eqs(33250), df.index[0].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
                                 finish & $t_f$""" + "{}{}".format(eqs(), df.index[-1].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
-                                epoch & $t_e$""" + eqs(67000) + r"""$t_f - t_s$ = """ + "{}".format(df_days.shape[0]) + r""" days \\
-                                timestamps & $T$""" + eqs(62000) + r"""$\{t: t_s \leq t \leq t_f\}$ \\
-                                sleeps & $S$""" + eqs(70000) + r"""$\{s_t: t \in T\}$ \\
+                                epoch & $t_e$""" + eqs(33500) + r"""$t_f - t_s$ = """ + "{}".format(df_days.shape[0]) + r""" days \\
+                                timestamps & $T$""" + eqs(31500) + r"""$\{t: t_s \leq t \leq t_f\}$ \\
+                                sleeps & $S$""" + eqs(35500) + r"""$\{s_t: t \in T\}$ \\
                                 total & $|S|$ = $|T|$""" + "{}{}".format(eqs(), df.shape[0]) + r""" sleeps \\
-                                average & $|S|/t_e$""" + "{}{:.2f}".format(eqs(61000), df.shape[0] / df_days.shape[0]) + r""" sleeps/day \\
+                                average & $|S|/t_e$""" + "{}{:.2f}".format(eqs(30250), df.shape[0] / df_days.shape[0]) + r""" sleeps/day \\
                                 sum & $\Sigma S/t_e$""" + "{}{:.0f}".format(eqs(), df_days_sum.mean()) + r""" min/day \\
                                 mean & $\overline{s}$""" + "{}{:.0f}".format(eqs(), df_duration.mean()) + r""" min \\
                                 median & $\widetilde{s}$""" + "{}{:.0f}".format(eqs(), df_duration.median()) + r""" min \\
                                 minimum & $\vee(S)$""" + "{}{:.0f}".format(eqs(), df_duration.min()) + r""" min \\
                                 maximum & $\wedge(S)$""" + "{}{:.0f}".format(eqs(), df_duration.max()) + r""" min \\
-                                standard deviation & $\sigma(S)$""" + "{}{:.0f}".format(eqs(63500), df_duration.std()) + r""" min \\
+                                standard deviation & $\sigma(S)$""" + "{}{:.0f}".format(eqs(31750), df_duration.std()) + r""" min \\
                                 \bottomrule
                             \end{tabular}
                         \end{table}
@@ -106,14 +111,23 @@ def save_plot(label, df, output, background_colour, foreground_colour, label_col
     plt.ylim(ymax=df['Radial'].max() + 1)
 
     print('Saving [{}] ... '.format(file_name))
-    plt.savefig(file_name, facecolor=background_colour, tight_layout=True, dpi=figure_dpi)
+    plt.savefig(file_name, facecolor=background_colour, tight_layout=True, dpi=DOTS_INCH)
     plt.close('all')
 
     print('Cropping [{}] ... '.format(file_name))
-    figure_png = Image.open(file_name)
-    figure_png = figure_png.crop((0, figure_header * figure_dpi, figure_width * figure_dpi, (figure_height + figure_header) * figure_dpi))
-    figure_png.save(file_name, dpi=(figure_dpi, figure_dpi))
-    figure_png.show()
+    crop_top_left_x = int(figure_margin * DOTS_INCH)
+    crop_top_left_y = int(figure_header * DOTS_INCH)
+    crop_bottom_right_x = int(figure_width * DOTS_INCH)
+    crop_bottom_right_y = int((figure_height + figure_header) * DOTS_INCH)
+    crop_width_offset = (crop_bottom_right_x - crop_top_left_x - WIDTH_INCH * DOTS_INCH) / 2
+    crop_height_offset = (crop_bottom_right_y - crop_top_left_y - HEIGHT_INCH * DOTS_INCH) / 2
+    with Image.open(file_name) as figure_png:
+        figure_png = figure_png.crop((
+            crop_top_left_x + crop_width_offset, crop_top_left_y + crop_height_offset,
+            crop_bottom_right_x - crop_width_offset, crop_bottom_right_y - crop_height_offset
+        ))
+        figure_png.save(file_name, dpi=(DOTS_INCH, DOTS_INCH))
+        figure_png.show()
 
     print('Completed image processing\n')
 

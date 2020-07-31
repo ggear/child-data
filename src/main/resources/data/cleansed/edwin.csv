@@ -1081,8 +1081,8 @@ Whammy!",,Jane Thomson
 2015-02-20 02:28:00,,,Nappy,,Dirty+Wet,"Edwin had a dirty and wet nappy (small, normal, mustard)",,Jane Thomson
 2015-02-20 02:40:00,2015-02-20 03:17:00,37,Sleep,,,Edwin slept (37min),,Jane Thomson
 2015-02-20 02:40:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
-2015-02-20 03:17:00,2015-02-20 05:51:00,154,Sleep,,,Edwin slept (2h34m),,Jane Thomson
-2015-02-20 03:17:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
+2015-02-20 03:20:00,2015-02-20 05:51:00,151,Sleep,,,Edwin slept (2h34m),,Jane Thomson
+2015-02-20 03:20:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2015-02-20 05:55:00,2015-02-20 06:21:00,14,Nursing,,,"Edwin nursed (10min right, 4min left)",,Jane Thomson
 2015-02-20 06:10:00,,,Nappy,,Dirty+Wet,"Edwin had a dirty and wet nappy (large, normal, mustard)",,Jane Thomson
 2015-02-20 07:12:00,2015-02-20 07:23:00,10,Nursing,,,Edwin nursed (10min left),,Jane Thomson
@@ -2295,11 +2295,11 @@ Whammy!",,Jane Thomson
 2015-04-04 18:50:00,2015-04-04 19:09:00,18,Nursing,,,Edwin nursed (18min right),,Jane Thomson
 2015-04-04 19:45:00,,,Nappy,,Dirty+Wet,"Edwin had a dirty and wet nappy (medium, normal, mustard)",,Jane Thomson
 2015-04-04 20:21:00,2015-04-04 20:29:00,8,Nursing,,,Edwin nursed (8min left),,Jane Thomson
-2015-04-04 20:47:00,2015-04-05 02:35:00,408,Sleep,,,Edwin slept (6h48m),,Jane Thomson
+2015-04-04 20:47:00,2015-04-05 02:35:00,348,Sleep,,,Edwin slept (5h48m),,Jane Thomson
 2015-04-04 20:47:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2015-04-05 02:37:00,2015-04-05 02:57:00,9,Nursing,,,"Edwin nursed (5min right, 3min left)",,Jane Thomson
 2015-04-05 02:54:00,,,Nappy,,Dirty+Wet,"Edwin had a dirty and wet nappy (medium, normal, mustard)",,Jane Thomson
-2015-04-05 02:57:00,2015-04-05 05:10:00,193,Sleep,,,Edwin slept (3h13m),,Jane Thomson
+2015-04-05 02:57:00,2015-04-05 05:10:00,133,Sleep,,,Edwin slept (3h13m),,Jane Thomson
 2015-04-05 02:57:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2015-04-05 05:10:00,2015-04-05 05:28:00,10,Nursing,,,"Edwin nursed (6min right, 4min left)",,Jane Thomson
 2015-04-05 05:22:00,,,Nappy,,Dirty+Wet,"Edwin had a dirty and wet nappy (small, normal, mustard)",,Jane Thomson
@@ -10093,20 +10093,19 @@ Whammy!",,Jane Thomson
 2016-03-01 18:34:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-03-01 22:22:00,2016-03-01 22:46:00,21,Nursing,,,"Edwin nursed (9m left, 11m right)",,Jane Thomson
 2016-03-01 22:46:00,2016-03-02 06:18:00,452,Sleep,,,Edwin slept (7h32m),,Jane Thomson
-2016-03-03 12:20:00,2016-03-03 14:40:00,140,Sleep,,,Edwin slept (2h20m),,Jane Thomson
-2016-03-04 01:30:00,2016-03-04 03:30:00,120,Sleep,,,Edwin slept (2h),,Graham
+2016-03-04 01:30:00,2016-03-04 03:30:00,120,Sleep - Drop,,,Edwin slept (2h),,Graham
 2016-03-04 01:30:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
-2016-03-04 03:33:00,2016-03-04 05:02:00,89,Sleep,,,Edwin slept (1h29m),,Graham
+2016-03-04 03:33:00,2016-03-04 05:02:00,89,Sleep - Drop,,,Edwin slept (1h29m),,Graham
 2016-03-04 03:33:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
-2016-03-04 05:04:00,2016-03-04 05:12:00,7,Sleep,,,Edwin slept (7m),,Graham
+2016-03-04 05:04:00,2016-03-04 05:12:00,7,Sleep - Drop,,,Edwin slept (7m),,Graham
 2016-03-04 05:04:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
-2016-03-04 05:15:00,2016-03-04 05:25:00,10,Sleep,,,Edwin slept (10m),,Graham
+2016-03-04 05:15:00,2016-03-04 05:25:00,10,Sleep - Drop,,,Edwin slept (10m),,Graham
 2016-03-04 05:15:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
-2016-03-04 05:28:00,2016-03-04 05:33:00,4,Sleep,,,Edwin slept (4m),,Graham
+2016-03-04 05:28:00,2016-03-04 05:33:00,4,Sleep - Drop,,,Edwin slept (4m),,Graham
 2016-03-04 05:28:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
-2016-03-04 05:40:00,2016-03-04 05:52:00,12,Sleep,,,Edwin slept (12m),,Graham
+2016-03-04 05:40:00,2016-03-04 05:52:00,12,Sleep - Drop,,,Edwin slept (12m),,Graham
 2016-03-04 05:40:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
-2016-03-04 12:00:00,2016-03-04 14:45:00,165,Sleep,,,Edwin slept (2h45m),,Jane Thomson
+2016-03-04 12:00:00,2016-03-04 14:45:00,165,Sleep - Drop,,,Edwin slept (2h45m),,Jane Thomson
 2016-03-04 19:18:00,2016-03-05 00:08:00,290,Sleep,,,Edwin slept (4h50m),,Jane Thomson
 2016-03-04 19:18:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
 2016-03-05 00:12:00,2016-03-05 00:45:00,32,Sleep,,,Edwin slept (32m),,Jane Thomson
@@ -10218,7 +10217,7 @@ Whammy!",,Jane Thomson
 2016-03-19 17:55:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-03-20 03:05:00,2016-03-20 03:14:00,9,Sleep,,,Edwin slept (9m),,Jane Thomson
 2016-03-20 03:05:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
-2016-03-20 03:14:00,2016-03-20 06:26:00,192,Sleep,,,Edwin slept (3h12m),,Jane Thomson
+2016-03-20 03:20:00,2016-03-20 06:26:00,186,Sleep,,,Edwin slept (3h12m),,Jane Thomson
 2016-03-20 03:14:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-03-20 10:43:00,2016-03-20 12:55:00,132,Sleep,,,Edwin slept (2h12m),,Jane Thomson
 2016-03-20 10:43:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
@@ -10392,7 +10391,7 @@ Whammy!",,Jane Thomson
 2016-04-28 18:15:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-04-29 12:15:00,2016-04-29 14:15:00,120,Sleep,,,Edwin slept (2h),,Jane Thomson
 2016-04-29 18:15:00,2016-04-30 06:20:00,725,Sleep,,,Edwin slept (12h05m),,Jane Thomson
-2016-04-30 13:05:00,2016-04-30 14:20:00,75,Sleep,,,Edwin slept (1h15m),,Jane Thomson
+2016-04-30 13:05:00,2016-04-30 14:20:00,75,Sleep - Drop,,,Edwin slept (1h15m),,Jane Thomson
 2016-04-30 18:10:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-05-01 13:00:00,2016-05-01 14:29:00,89,Sleep,,,Edwin slept (1h29m),,Jane Thomson
 2016-05-01 13:00:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
@@ -10420,9 +10419,9 @@ Whammy!",,Jane Thomson
 2016-05-07 11:01:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-05-07 17:52:00,2016-05-08 06:10:00,738,Sleep,,,Edwin slept (12h18m),,Jane Thomson
 2016-05-07 17:52:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
-2016-05-08 13:10:00,2016-05-08 15:06:00,115,Sleep,,,Edwin slept (1h55m),,Jane Thomson
+2016-05-08 13:10:00,2016-05-08 15:06:00,115,Sleep - Drop,,,Edwin slept (1h55m),,Jane Thomson
 2016-05-08 13:10:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
-2016-05-08 18:39:00,2016-05-08 22:42:00,243,Sleep,,,Edwin slept (4h03m),,Jane Thomson
+2016-05-08 18:39:00,2016-05-08 22:42:00,243,Sleep - Drop,,,Edwin slept (4h03m),,Jane Thomson
 2016-05-08 18:39:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-05-09 10:19:00,2016-05-09 13:13:00,173,Sleep,,,Edwin slept (2h53m),,Jane Thomson
 2016-05-09 10:19:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
@@ -10460,13 +10459,13 @@ Whammy!",,Jane Thomson
 2016-05-16 02:42:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
 2016-05-16 03:44:00,2016-05-16 07:01:00,197,Sleep,,,Edwin slept (3h17m),,Graham
 2016-05-16 13:00:00,2016-05-16 15:00:00,120,Sleep,,,Edwin slept (2h),,Jane Thomson
-2016-05-16 18:30:00,2016-05-17 06:30:00,720,Sleep,,,Edwin slept (12h),,Jane Thomson
+2016-05-16 18:30:00,2016-05-17 06:30:00,720,Sleep - Drop,,,Edwin slept (12h),,Jane Thomson
 2016-05-16 18:45:00,2016-05-17 05:54:00,669,Sleep,,,Edwin slept (11h09m),,Graham
 2016-05-16 18:45:00,,,Sleep Start,,,Edwin starts sleeping,,Graham
 2016-05-17 12:40:00,2016-05-17 13:40:00,60,Sleep,,,Edwin slept (1h),,Jane Thomson
 2016-05-17 18:40:00,2016-05-18 06:15:00,694,Sleep,,,Edwin slept (11h34m),,Jane Thomson
 2016-05-17 18:40:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
-2016-05-18 13:59:00,2016-05-18 16:13:00,134,Sleep,,,Edwin slept (2h14m),,Jane Thomson
+2016-05-18 13:59:00,2016-05-18 16:13:00,134,Sleep - Drop,,,Edwin slept (2h14m),,Jane Thomson
 2016-05-18 13:59:00,,,Sleep Start,,,Edwin starts sleeping,,Jane Thomson
 2016-05-19 12:40:00,2016-05-19 14:40:00,119,Sleep,,,Edwin slept (1h59m),,Jane Thomson
 2016-05-19 18:50:00,2016-05-20 05:59:00,669,Sleep,,,Edwin slept (11h09m),,Jane Thomson

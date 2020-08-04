@@ -10,11 +10,6 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-# TODO:
-#   - Decide on size 30x30, 30x48, 40x60, 48x60, 60x60 print
-#   - Only save variations at high res, scale to print size
-
-
 WIDTH_INCH = 27
 WIDTH_INCH_SCALE = 27
 HEIGHT_INCH = 33 / WIDTH_INCH_SCALE * WIDTH_INCH
@@ -37,9 +32,9 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
     figure_header = 0.3 * figure_width
     figure_margin = 21 / 30 * figure_width / (WIDTH_INCH_SCALE + 1)
     figure_width_subplot = 18 * figure_width / (WIDTH_INCH_SCALE + 1)
-    figure_height_subplot = 7.5 * figure_width / (WIDTH_INCH_SCALE + 1)
+    figure_height_subplot = 7.8 * figure_width / (WIDTH_INCH_SCALE + 1)
     figure_line_width = 0.05 * figure_width
-    figure_line_style = (0, (6, 10))
+    figure_line_style = (6.92, 10)
     figure_alpha = 0.5
     font_size = 1.25 * figure_width
     font_size_small = 0.8 * figure_width
@@ -83,7 +78,9 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
                  '', '', '', '', '', '', '', '', '', '', '', '7pm', '']
         for i in range(len(ticks)):
             if hours[i] != '':
-                plt.plot((0, ticks[i]), (0, data['Stop'].max()), color=label_colour, linewidth=figure_line_width, alpha=figure_alpha)
+                plt.plot((0, ticks[i]), (0, data['Stop'].max()),
+                         linestyle=(figure_line_style[0] / 2, figure_line_style), color=label_colour, linewidth=figure_line_width,
+                         alpha=figure_alpha)
             if label_print:
                 plt.text(ticks[i], data['Stop'].max() + 50, hours[i], ha='center', va='center', color=label_colour)
         if stats_print:
@@ -135,7 +132,7 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
     hist_bins = 100
     hist_bins_range = (0, 850)
     label_x = r"\fontsize{" + "{}".format(font_size_small) + r"}{" + "{}".format(font_baselineskip) + r"}\selectfont{3 hours}"
-    label_y = r"\fontsize{" + "{}".format(font_size_small) + r"}{" + "{}".format(font_baselineskip) + r"}\selectfont{150 instances}"
+    label_y = r"\fontsize{" + "{}".format(font_size_small) + r"}{" + "{}".format(font_baselineskip) + r"}\selectfont{125 instances}"
     figure = plt.figure(figsize=(figure_width_subplot, figure_height_subplot))
     axes = figure.add_subplot(111)
     plt.hist(data[data['Period'] == 'Day']['Duration'], facecolor=foreground_colour,
@@ -145,10 +142,10 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
     plt.xlim(0, hist_bins_range[1])
     plt.ylim(0, 260)
     plt.axis('off')
-    axes.axes.axvline(174, 0, 0.89, linestyle=figure_line_style, color=label_colour, linewidth=figure_line_width, alpha=figure_alpha)
-    axes.text(0.205, 0.94, label_x, transform=axes.axes.transAxes, ha='center', va='center', color=label_colour)
-    axes.axes.axhline(150, 0, 0.78, linestyle=figure_line_style, color=label_colour, linewidth=figure_line_width, alpha=figure_alpha)
-    axes.text(0.84, 0.581, label_y, transform=axes.axes.transAxes, ha='center', va='center', color=label_colour)
+    axes.axes.axvline(174.5, 0, 0.85, linestyle=(0, figure_line_style), color=label_colour, linewidth=figure_line_width, alpha=figure_alpha)
+    axes.text(0.206, 0.9, label_x, transform=axes.axes.transAxes, ha='center', va='center', color=label_colour)
+    axes.axes.axhline(124, 0, 0.77, linestyle=(0, figure_line_style), color=label_colour, linewidth=figure_line_width, alpha=figure_alpha)
+    axes.text(0.836, 0.485, label_y, transform=axes.axes.transAxes, ha='center', va='center', color=label_colour)
     plt.savefig('{}_tmp.png'.format(file_name), facecolor=background_colour, tight_layout=True, dpi=DOTS_INCH)
     plt.close('all')
 
@@ -166,10 +163,10 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
                 crop_bottom_right_x - crop_width_offset, crop_bottom_right_y - crop_height_offset
             ))
             tmp_png = tmp_png.crop((
-                int((675 - 20) / 300 * DOTS_INCH), int((302 - 20) / 300 * DOTS_INCH),
-                int((4617 + 20) / 300 * DOTS_INCH), int((2003 + 20) / 300 * DOTS_INCH)
+                int((675 - 20) / 300 * DOTS_INCH), int((302 - 60 - 20) / 300 * DOTS_INCH),
+                int((4617 + 20) / 300 * DOTS_INCH), int((2003 + 200 + 20) / 300 * DOTS_INCH)
             ))
-            figure_png.paste(tmp_png, (int(3168 / 300 * DOTS_INCH), int(7231 / 300 * DOTS_INCH)))
+            figure_png.paste(tmp_png, (int(3168 / 300 * DOTS_INCH), int(7055 / 300 * DOTS_INCH)))
             figure_png.save('{}.png'.format(file_name), dpi=(DOTS_INCH, DOTS_INCH))
             os.remove('{}_tmp.png'.format(file_name))
             figure_png.show()
@@ -263,10 +260,6 @@ def get_data(label, path_input, path_output, activity):
 metadata_all = {
     'edwin': [
         ('#f0f6ff', '#c2e1ec', '#afd0e7', '#5a7b8f', True, True),
-        # ('#EAF2FA', '#A4C9D7', '#5A7B8F', '#5A7B8F', False, False),
-        # ('#B2D2A4', '#1A4314', '#5A7B8F', '#5A7B8F', False, False),
-        # ('#7EC8E3', '#0000FF', '#5A7B8F', '#5A7B8F', False, False),
-        # ('#C3E0E5', '#274472', '#5A7B8F', '#5A7B8F', False, False),
     ],
     'ada': [
         ('#fff1f0', '#f4c7c4', '#efaca7', '#a5662f', True, True),

@@ -13,29 +13,28 @@ from PIL import Image
 WIDTH_INCH = 27
 WIDTH_INCH_SCALE = 27
 HEIGHT_INCH = 33 / WIDTH_INCH_SCALE * WIDTH_INCH
-DOTS_INCH = 300
+DOTS_INCH = 600
 
 MAX_EPOCH = 479
-MAX_DURATION = 806
-QUANTISED_DURATION = 5
 PIL.Image.MAX_IMAGE_PIXELS = None
 mfm.fontManager.ttflist.extend(mfm.createFontList(mfm.findSystemFonts(fontpaths='/Users/graham/Library/Fonts')))
 
 
-def save_plot(label, data, output, background_colour, foreground_colour, highlight_colour, label_colour, label_print, stats_print):
+def save_plot(
+        label, data, output, background_colour, foreground_colour, highlight_colour, label_colour, alpha_colour, label_print, stats_print):
     file_name = '{}_{}_{}_{}_{}' \
         .format(output, background_colour, foreground_colour, highlight_colour, label_colour)
 
     print('Setup [{}.png] ... '.format(file_name))
     figure_width = WIDTH_INCH + 1 * (WIDTH_INCH + 1) / (WIDTH_INCH_SCALE + 1)
-    figure_height = 1.08 * figure_width
-    figure_header = 0.3 * figure_width
+    figure_height = 1.5 * figure_width
+    figure_header = 0.31 * figure_width
     figure_margin = 21 / 30 * figure_width / (WIDTH_INCH_SCALE + 1)
     figure_width_subplot = 18 * figure_width / (WIDTH_INCH_SCALE + 1)
     figure_height_subplot = 7.8 * figure_width / (WIDTH_INCH_SCALE + 1)
     figure_line_width = 0.05 * figure_width
     figure_line_style = (6.92, 10)
-    figure_alpha = 0.5
+    figure_alpha = alpha_colour
     font_size = 1.25 * figure_width
     font_size_small = 0.8 * figure_width
     font_baselineskip = 1.05 * figure_width
@@ -103,20 +102,19 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
                                 \toprule
                                 \textbf{""" + label.title() + r"""'s first sleeps} &  \\
                                 \midrule
-                                start & $t_s$""" + "{}{}".format(eqs(33250), df.index[0].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
+                                start & $t_s$""" + "{}{}".format(eqs(21250), df.index[0].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
                                 finish & $t_f$""" + "{}{}".format(eqs(), df.index[-1].strftime("%d/%m/%Y %H:%M:%S")) + r""" \\
-                                epoch & $t_e$""" + eqs(33500) + r"""$t_f - t_s$ = """ + "{}".format(df_days.shape[0]) + r""" days \\
-                                timestamps & $T$""" + eqs(31500) + r"""$\{t: t_s \leq t \leq t_f\}$ \\
-                                sleeps & $S$""" + eqs(35500) + r"""$\{s_t: t \in T\}$ \\
+                                epoch & $t_e$""" + eqs(21500) + r"""$t_f - t_s$ = """ + "{}".format(df_days.shape[0]) + r""" days \\
+                                timestamps & $T$""" + eqs(20500) + r"""$\{t: t_s \leq t \leq t_f\}$ \\
+                                sleeps & $S$""" + eqs(23250) + r"""$\{s_t: t \in T\}$ \\
                                 total & $|S|$ = $|T|$""" + "{}{}".format(eqs(), df.shape[0]) + r""" sleeps \\
-                                average & $|S|/t_e$""" + "{}{:.2f}".format(eqs(30250), df.shape[0] / df_days.shape[0]) + r"""
-                                sleeps/day \\
+                                average & $|S|/t_e$""" + "{}{:.2f}".format(eqs(19600), df.shape[0] / df_days.shape[0]) + r""" sleeps/day \\
                                 sum & $\Sigma S/t_e$""" + "{}{:.0f}".format(eqs(), df_days_sum.mean()) + r""" min/day \\
                                 mean & $\overline{s}$""" + "{}{:.0f}".format(eqs(), df_duration.mean()) + r""" min \\
                                 median & $\widetilde{s}$""" + "{}{:.0f}".format(eqs(), df_duration.median()) + r""" min \\
                                 minimum & $\vee(S)$""" + "{}{:.0f}".format(eqs(), df_duration.min()) + r""" min \\
                                 maximum & $\wedge(S)$""" + "{}{:.0f}".format(eqs(), df_duration.max()) + r""" min \\
-                                standard deviation & $\sigma(S)$""" + "{}{:.0f}".format(eqs(31750), df_duration.std()) + r""" min \\
+                                standard deviation & $\sigma(S)$""" + "{}{:.0f}".format(eqs(20350), df_duration.std()) + r""" min \\
                                 \bottomrule
                             \end{tabular}
                         \end{table}
@@ -145,7 +143,7 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
     axes.axes.axvline(174.5, 0, 0.85, linestyle=(0, figure_line_style), color=label_colour, linewidth=figure_line_width, alpha=figure_alpha)
     axes.text(0.206, 0.9, label_x, transform=axes.axes.transAxes, ha='center', va='center', color=label_colour)
     axes.axes.axhline(124, 0, 0.77, linestyle=(0, figure_line_style), color=label_colour, linewidth=figure_line_width, alpha=figure_alpha)
-    axes.text(0.836, 0.485, label_y, transform=axes.axes.transAxes, ha='center', va='center', color=label_colour)
+    axes.text(0.840, 0.480, label_y, transform=axes.axes.transAxes, ha='center', va='center', color=label_colour)
     plt.savefig('{}_tmp.png'.format(file_name), facecolor=background_colour, tight_layout=True, dpi=DOTS_INCH)
     plt.close('all')
 
@@ -166,7 +164,7 @@ def save_plot(label, data, output, background_colour, foreground_colour, highlig
                 int((675 - 20) / 300 * DOTS_INCH), int((302 - 60 - 20) / 300 * DOTS_INCH),
                 int((4617 + 20) / 300 * DOTS_INCH), int((2003 + 200 + 20) / 300 * DOTS_INCH)
             ))
-            figure_png.paste(tmp_png, (int(3168 / 300 * DOTS_INCH), int(7055 / 300 * DOTS_INCH)))
+            figure_png.paste(tmp_png, (int(3168 / 300 * DOTS_INCH), int(7015 / 300 * DOTS_INCH)))
             figure_png.save('{}.png'.format(file_name), dpi=(DOTS_INCH, DOTS_INCH))
             os.remove('{}_tmp.png'.format(file_name))
             figure_png.show()
@@ -259,10 +257,10 @@ def get_data(label, path_input, path_output, activity):
 
 metadata_all = {
     'edwin': [
-        ('#f0f6ff', '#c2e1ec', '#afd0e7', '#5a7b8f', True, True),
+        ('#f0f6ff', '#9cc8e5', '#579ac7', '#5a7b8f', 0.4, True, True),
     ],
     'ada': [
-        ('#fff1f0', '#f4c7c4', '#efaca7', '#a5662f', True, True),
+        ('#fff1f0', '#fba298', '#fe6f5f', '#ac635f', 0.5, True, True),
     ]
 }
 
@@ -271,4 +269,4 @@ for child in metadata_all.keys():
                     '../resources/data/processed/{}_sleep'.format(child), 'Sleep')
     for metadata in metadata_all[child]:
         save_plot(child, data, '../resources/image/{}_sleep'.format(child),
-                  metadata[0], metadata[1], metadata[2], metadata[3], metadata[4], metadata[5])
+                  metadata[0], metadata[1], metadata[2], metadata[3], metadata[4], metadata[5], metadata[6])
